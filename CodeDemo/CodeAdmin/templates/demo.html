@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<head>
+<title></title>
+
+<link href="static/nfine/css/framework-font.css" rel="stylesheet" />
+<link href="static/nfine/css/framework-theme.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap-switch.min.css" rel="stylesheet" />
+
+<script src="static/nfine/js/jquery/jquery-2.1.1.min.js"></script>
+
+<script src="static/nfine/js/jqgrid/jqgrid.min.js"></script>
+<link href="static/nfine/js/jqgrid/jqgrid.css" rel="stylesheet" />
+<script src="static/nfine/js/jqgrid/grid.locale-cn.js"></script>
+
+<script src="static/nfine/js/bootstrap/bootstrap.js"></script>
+<script src="static/nfine/js/bootstrap/bootstrap-switch.js"></script>
+
+<link href="static/nfine/css/framework-ui.css" rel="stylesheet" />
+<script src="static/nfine/js/framework-ui.js"></script>
+<script src="static/nfine/js/indexsearch.js"></script>
+
+<script>
+
+    $(document).ready(function(){
+        $("#method").change(function(){
+            var method = $("#method").val();
+            var m1 = $('#m1')[0];
+            var b1 = $('#b1')[0];
+            var m2 = $('#m2')[0];
+            var m3 = $('#m3')[0];
+            var b2 = $('#b2')[0];
+
+            if(method==1)
+            {
+                 m1.style.display="inline";
+                 b1.style.display="inline";
+                 m2.style.display="none";
+                 m3.style.display="none";
+                 b2.style.display="none";
+             }
+            else
+            {
+                 m1.style.display="none";
+                 b1.style.display="none";
+                 m2.style.display="inline";
+                 m3.style.display="inline";
+                 b2.style.display="inline";
+             }
+        });
+    });
+    
+    function demo_fun()
+    {
+         var data = $("#data").val();
+         senddata(data);
+    }
+    var t1;
+    function demo_fun_starttime()
+    {
+        var timelength = $("#timelength").val();
+        refreshsenddata();
+        t1 = window.setInterval(refreshsenddata, timelength*1000);
+    }
+    
+    function demo_fun_stoptime()
+    {
+        //alert('stop');
+        //去掉定时器的方法  
+        window.clearInterval(t1);
+    }
+    
+    function refreshsenddata() {
+        var length = $("#data2").val();
+         //var random = Math.random();
+         //Math.floor(random*Math.pow(10,length));
+         var data = randomWord(false, length);
+         senddata(data);
+    }
+
+    function senddata(data)
+    {
+         $.ajax({
+    			url:"dataprocessing",
+    			data:{paramdata:data},
+    			type:"GET",
+    			success:function(data){
+    				console.log(data);
+    				//alert(data);
+    				$("#result").html(data);		
+    			},
+    			error:function(data){
+    				console.log(data);
+    				//$("#result").html(data);
+    			}
+    		});
+     }
+     
+    /*
+    ** randomWord 产生任意长度随机字母数字组合
+    ** randomFlag-是否任意长度 min-任意长度最小位[固定位数] max-任意长度最大位
+    ** 墨文 2018-11-22
+    */
+     
+    function randomWord(randomFlag, min, max){
+        var str = "",
+            range = min,
+            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+     
+        // 随机产生
+        if(randomFlag){
+            range = Math.round(Math.random() * (max-min)) + min;
+        }
+        for(var i=0; i<range; i++){
+            pos = Math.round(Math.random() * (arr.length-1));
+            str += arr[pos];
+        }
+        return str;
+    }
+    
+</script>		
+</head>
+<body>
+    <div class="form-horizontal" role="form">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">发送数据方式</label>
+
+            <div class="col-sm-6">
+                <select id="method" class="form-control m-b" name="account">
+                    <option value ="1">手动输入</option>
+                    <option value ="2">随机产生</option>
+                </select>
+            </div>
+        </div>
+        <div id="m1" class="form-group">
+            <label class="col-sm-2 control-label">输入加密数据</label>
+
+            <div class="col-sm-6">
+                <input id="data" type="text" placeholder="输入加密数据" class="form-control" value="123456789">
+            </div>
+        </div>
+        <div  id="b1" class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+                <button class="btn btn-primary" onclick="demo_fun()">发送</button>
+            </div>
+        </div>
+        
+        <div id="m2" class="form-group" style="display:none;">
+            <label class="col-sm-2 control-label">输入随机数长度</label>
+            <div class="col-sm-6">
+                <input id="data2" type="text" placeholder="输入随机数长度" class="form-control" value="20">
+            </div>
+        </div>
+        <div id="m3" class="form-group" style="display:none;">
+            <label class="col-sm-2 control-label">输入随机数长度</label>
+            <div class="col-sm-6">
+                <input id="timelength" type="text" placeholder="输入发送时间间隔" class="form-control" value="5">
+            </div>
+            <label class="control-label">秒</label>
+        </div>
+        <div  id="b2" class="form-group" style="display:none;">
+            <div class="col-sm-4 col-sm-offset-2">
+                <button class="btn btn-primary" onclick="demo_fun_starttime()">定时发送</button>
+                <button class="btn btn-primary" onclick="demo_fun_stoptime()">取消发送</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="col-sm-1"></div>
+            <div class="ibox float-e-margins col-sm-7">
+                <div class="ibox-title">
+                    <h3>已发送数据</h3>
+                </div>
+                <div class="ibox-content">
+                    <div  class="alert alert-info">
+                        <h4 id="result" style="margin-bottom:0px;word-wrap:break-word;"></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

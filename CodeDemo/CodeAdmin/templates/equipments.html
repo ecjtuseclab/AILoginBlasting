@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<head>
+<title></title>
+
+<link href="static/nfine/css/framework-font.css" rel="stylesheet" />
+<link href="static/nfine/css/framework-theme.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap-switch.min.css" rel="stylesheet" />
+
+<script src="static/nfine/js/jquery/jquery-2.1.1.min.js"></script>
+
+<script src="static/nfine/js/jqgrid/jqgrid.min.js"></script>
+<link href="static/nfine/js/jqgrid/jqgrid.css" rel="stylesheet" />
+<script src="static/nfine/js/jqgrid/grid.locale-cn.js"></script>
+
+<script src="static/nfine/js/bootstrap/bootstrap.js"></script>
+<script src="static/nfine/js/bootstrap/bootstrap-switch.js"></script>
+
+<link href="static/nfine/css/framework-ui.css" rel="stylesheet" />
+<script src="static/nfine/js/framework-ui.js"></script>
+<script src="static/nfine/js/indexsearch.js"></script>
+<style>
+i{margin-right:5px;font-size:13px;}
+th{width:120px !important;}
+td{padding-right:60px !important;}
+</style>
+<script>
+
+	function btn_restart() {
+	    $.deleteForm({
+	        url: "restartequipments",
+			prompt: "注：您确定要重启设备吗？",
+			loading: "正在重启设备...",
+	        success: function (data) {
+	        	console.log(data);
+	            //$.currentWindow().$("#gridList").resetSelection();
+	            //$.currentWindow().$("#gridList").trigger("reloadGrid");
+	        },
+	        error:function(data){
+	        	console.log(data);
+	        }
+	    })
+	}
+
+    //Form 
+    $(function () {
+        //请求数据
+        $.ajax({
+            url: "getequipments",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $("#form1").formSerialize(data.rows[0]);
+            }
+        });
+        //不可编辑 
+        input_change("0px",true);
+       
+    });
+    
+    function submitForm() {
+        //if (!$('#form1').formValid()) {
+        //    return false;
+        //}
+        var temp = $("#form1").formSerialize();
+        $.submitForm({
+            url: "editequipments",
+            param: $("#form1").formSerialize(),
+            success: function (data) {
+                //$.currentWindow().$("#gridList").resetSelection();
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+        input_change("0px",true);
+        tools_change(false);
+    }
+    
+    function btn_edit()
+    {
+        input_change("1px solid #ddd",false);
+        tools_change(true);
+    }
+    
+    function btn_cancel()
+    {
+        input_change("0px",true);
+        tools_change(false);
+    }
+    
+    function input_change(border,readonly)
+    {
+        $("input").each(function(){
+            var temp = $(this);
+            temp[0].style.border = border;
+            temp[0].readOnly = readonly;
+        });
+    }
+    
+    function tools_change(flag)
+    {
+        if(flag == true)
+        {
+            $("#edit")[0].style.display = "none";
+            $("#save")[0].style.display = "inline-block";
+            $("#cancel")[0].style.display = "inline-block";
+        }
+        else
+        {
+            $("#edit")[0].style.display = "inline-block";
+            $("#save")[0].style.display = "none";
+            $("#cancel")[0].style.display = "none";
+        }
+    }
+    
+
+</script>		
+</head>
+<body>
+
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#">基本信息</a></li>
+            <div style="float:right;">
+                <div class="toolbar">
+                    <div class="btn-group">
+                        <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+                    </div>
+                    <div id="edit" class="btn-group">
+            			<a authorize="yes" class="btn btn-primary" onclick="btn_edit()"><i class="fa fa-database"></i>修改</a>
+                    </div>
+                     <div id="save" class="btn-group" style="display:none;">
+            			<a authorize="yes" class="btn btn-primary" onclick="submitForm()"><i class="fa fa-database"></i>保存</a>
+                    </div>
+                     <div id="cancel" class="btn-group" style="display:none;">
+            			<a authorize="yes" class="btn btn-primary" onclick="btn_cancel()"><i class="fa fa-database"></i>取消</a>
+                    </div>
+                    <div class="btn-group">
+            			<a id="NF-Details" authorize="yes" class="btn btn-primary" onclick="btn_restart()"><i class="fa fa-spinner"></i>重启设备</a>
+                    </div>
+                </div>
+            </div>
+        </ul>
+        <div style="padding-top: 20px; margin-right: 30px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">设备编号<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="rpi_code" name="rpi_code" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">设备别名<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="rpi_name" name="rpi_name" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">远程服务器ip<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="remote_serverhost" name="remote_serverhost" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">远程服务器端口<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="remote_serverport" name="remote_serverport" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">本地服务器ip<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="local_serverhost" name="local_serverhost" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">本地服务器端口<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="local_serverport" name="local_serverport" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">本地服务最大连接数量<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="local_servermaxconcount" name="local_servermaxconcount" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">本地客户端数量<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="local_clientcount" name="local_clientcount" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">数据发送时间间隔<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="sendtime" name="sendtime" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">本地连接池状态检测时间间隔<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="checkcontime" name="checkcontime" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">equipmentInfos<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="equipmentInfos" name="equipmentInfos" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">equipmentkey<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="equipmentkey" name="equipmentkey" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">r1<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="r1" name="r1" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">r2<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="r2" name="r2" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">备注<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="remark" name="remark" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">添加时间<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="create_time" name="create_time" type="text" class="form-control required" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+
+</body>
+
+</html>

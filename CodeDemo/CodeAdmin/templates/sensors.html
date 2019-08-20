@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<head>
+<title></title>
+
+<link href="static/nfine/css/framework-font.css" rel="stylesheet" />
+<link href="static/nfine/css/framework-theme.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap-switch.min.css" rel="stylesheet" />
+
+<script src="static/nfine/js/jquery/jquery-2.1.1.min.js"></script>
+
+<script src="static/nfine/js/jqgrid/jqgrid.min.js"></script>
+<link href="static/nfine/js/jqgrid/jqgrid.css" rel="stylesheet" />
+<script src="static/nfine/js/jqgrid/grid.locale-cn.js"></script>
+
+<script src="static/nfine/js/bootstrap/bootstrap.js"></script>
+<script src="static/nfine/js/bootstrap/bootstrap-switch.js"></script>
+
+<link href="static/nfine/css/framework-ui.css" rel="stylesheet" />
+<script src="static/nfine/js/framework-ui.js"></script>
+<script src="static/nfine/js/indexsearch.js"></script>
+
+	<script>
+		$(function () {
+		    gridList();
+		})
+
+		function gridList() {
+	
+			var $gridList = $("#gridList");
+			$gridList.jqGrid({
+				url: "getsensors",
+				datatype: "json",
+				width:'100%',
+				height: '100%',
+				rowNum: 40,
+                sortable:false,
+				colModel: [
+					{ label: '操作', name: 'act',  width: 100, sortable: false, align: 'center'},
+					{ label: 'id', name: 'id',  width: 70, sortable: false, align: 'center', editable:false, hidden:true },
+					{ label: '传感器编号', name: 'sensor_code',  width: 70, sortable: false, align: 'center', editable:true },
+					{ label: '传感器名称', name: 'sensor_name',  width: 70, sortable: false, align: 'center', editable:true },
+					{ label: '传感器类别', name: 'type',  width: 70,sortable: false,  align: 'center' , editable:true, 
+						edittype: "select", 
+						editoptions: {value: "{% for value in sensor_type %}{{ value.property_value }}:{{ value.property_meaning }}{% if not forloop.last %};{% endif %}{% endfor %}"}
+					},
+					{ label: '采集频率', name: 'acqfre',  width: 60, sortable: false, align: 'center' , editable:true },
+					{ label: '发送频率', name: 'tranfre',  width: 60, sortable: false, align: 'center' , editable:true },
+					{ label: '数据保留天数', name: 'keep_time',  width: 80, sortable: false, align: 'center', editable:true},
+					{ label: '数据缓存条数', name: 'rediscount',  width: 80, sortable: false, align: 'center', editable:true},
+					{ label: '引脚使用', name: 'pins',  width: 60, sortable: false, align: 'center', editable:true},
+					{ label: '参数', name: 'parameters',  width: 50, sortable: false, align: 'center', editable:true},					
+					{ label: '是否启用', name: 'enable',  width: 60, sortable: false, align: 'center',  editable:true, 
+						edittype: "select", 
+						editoptions: {value: "0:否;1:是"} },
+					{ label: '备注', name: 'remark',  width: 60, sortable: false, align: 'center', editable:true, 
+						edittype: "textarea", 
+						editoptions: {rows: "2", cols: "100"} },
+					{ label: '添加时间', name: 'create_time',  width: 70, sortable: false, align: 'center' , editable:false}
+				],
+				gridComplete: function(){
+					var ids = $gridList.jqGrid('getDataIDs');
+			
+					for(var i=0; i<ids.length; i++)
+					{
+						var cl = ids[i];
+						be = "<input id='editbtn"+cl+"' class='btn btn-info' type='button' value='修改' onclick=\"$('#gridList').editRow('"+cl+"');$('#editbtn"+cl+"').css('display','none');$('#savebtn"+cl+"').css('display','inline');$('#restorebtn"+cl+"').css('display','inline');\" >";			
+	  					se = "<input id='savebtn"+cl+"' class='btn btn-primary' style='display:none' type='button' value='应用' onclick=\"$('#gridList').saveRow('"+cl+"');$('#editbtn"+cl+"').css('display','inline');$('#savebtn"+cl+"').css('display','none');$('#restorebtn"+cl+"').css('display','none');\" >";
+						ce = "<input id='restorebtn"+cl+"' class='btn btn-danger' style='display:none' type='button' value='取消' onclick=\"$('#gridList').restoreRow('"+cl+"');$('#editbtn"+cl+"').css('display','inline');$('#savebtn"+cl+"').css('display','none');$('#restorebtn"+cl+"').css('display','none');\" >";		
+						$gridList.jqGrid('setRowData',ids[i], {act: be + se + ce});
+					}
+
+					//jqgrid 加载完成重新渲染
+					$("[id^='home_sensor']").bootstrapSwitch({
+							onText:'on',
+							offText:'off',
+							onSwitchChange:function(e,e_state){
+								console.log(this.id);
+								console.log(e_state);	
+								sensorid = this.id.replace('home_sensor_','');
+								state = e_state.toString();
+							}
+					});
+
+
+				},
+				editurl: 'editsensors'
+			});	
+		}
+  
+	function btn_add() {
+        $.modalOpen({
+            id: "Form",
+            title: "新增传感器",
+            url: "getFormPage?tablename=sensors",
+            width: "700px",
+            height: "510px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+        
+    function btn_delete() {
+        var id = $("#gridList").jqGridRowValue().id;
+        $.deleteForm({
+            url: "delete",
+            param: { tablename: "sensors", id: $("#gridList").jqGridRowValue().id },
+            success: function () {
+                $.currentWindow().$("#gridList").resetSelection();
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+
+	function btn_setting() {
+        var id = $("#gridList").jqGridRowValue().id;
+	    $.deleteForm({
+	        url: "sensorsetting",
+			prompt: "注：您确定要设置该传感器吗？",
+			loading: "正在设置设备...",
+            param: { id: $("#gridList").jqGridRowValue().id },
+	        success: function (data) {
+	        	console.log(data);
+	            //$.currentWindow().$("#gridList").resetSelection();
+	            //$.currentWindow().$("#gridList").trigger("reloadGrid");
+	        },
+	        error:function(data){
+	        	console.log(data);
+	        }
+	    })
+	}
+
+
+</script>		
+</head>
+<body>
+
+
+<div class="topPanel">
+	<div class="search">
+        <table>
+            <tr>
+                <td style="padding-right: 3px;">
+                    <div class="btn-group">
+                        <a class="btn btn-primary dropdown-text" onclick="advance_search()">高级查询</a>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要查询的关键字" style="width: 200px;">
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="toolbar">
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+        <div class="btn-group">
+			<a id="add" authorize="yes" class="btn btn-primary" onclick="btn_add()"><i class="fa fa-plus"></i>新增</a>
+        </div>
+        <div class="btn-group">
+			<a id="delete" authorize="yes" class="btn btn-primary" onclick="btn_delete()"><i class="fa fa-trash-o"></i>删除</a>
+        </div>
+		<div class="btn-group">
+			<a id="NF-Details" authorize="yes" class="btn btn-primary" onclick="btn_setting()"><i class="fa fa-spinner"></i>设置</a>
+        </div>
+    </div>
+</div>
+
+<div class="gridPanel">
+    <table id="gridList"></table>
+</div>
+
+</body>
+
+</html>

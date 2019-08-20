@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}默认标题{% endblock %} - 树莓派</title>
+	{% include 'Reference.html' %}
+	<script>
+		var tablename = {% block tablename %}''{% endblock %};
+		$(function () {
+		    gridList();
+		})
+
+		function gridList() {
+	
+			{% block script %}
+			{% endblock %} 
+	
+			$gridList.jqGrid('navGrid', '#gridPager',
+        		{edit: false, add: false, del: false },
+        		{},//edit options
+        		{},//add options
+        		{},//del options
+        		{  //search options
+        			beforeSearch:function(data){
+        				console.log(data);
+        				alert(data);
+        			},
+        			multipleSearch: true,
+        			multipleGroup: true,
+        			showQuery: true,
+        			// set the names of the template
+        			"tmplNames": ["模板一", "模板二"],
+        			// set the template statics
+        			"tmplFilters": [template1, template2]
+        		});	
+
+			$("#btn_search").click(function () {
+		    	var query = $(".query").val();
+		        $gridList.jqGrid('setGridParam', {
+		            postData: { keyword: $("#txt_keyword").val() },
+		        }).trigger('reloadGrid');
+		    });
+
+			$("#fbox_gridList_search").click(function () {
+		    	var query = $(".query").val();
+		        $gridList.jqGrid('setGridParam', {
+		            postData: { keyword: $("#txt_keyword").val() },
+		        }).trigger('reloadGrid');
+		    });				
+		}
+
+		function btn_add() {
+		    $.modalOpen({
+		        id: "Form",
+		        title: "新增动作",
+		        url: "Admin/Action/Form",
+		        width: "700px",
+		        height: "510px",
+		        callBack: function (iframeId) {
+		            top.frames[iframeId].submitForm();
+		        }
+		    });
+		}
+		function btn_edit() {
+		    var id = $("#gridList").jqGridRowValue().id;
+		    $.modalOpen({
+		        id: "Form",
+		        title: "修改动作",
+		        url: "Admin/Action/Form?id=" + id,
+		        width: "700px",
+		        height: "510px",
+		        callBack: function (iframeId) {
+		            top.frames[iframeId].submitForm();
+		        }
+		    });
+		}
+		function btn_delete() {
+		    $.deleteForm({
+		        url: "delete",
+		        param: { tablename: tablename },
+		        success: function (data) {
+		        	console.log(data);
+		            $.currentWindow().$("#gridList").resetSelection();
+		            $.currentWindow().$("#gridList").trigger("reloadGrid");
+		        },
+		        error:function(data){
+		        	console.log(data);
+		        }
+		    })
+		}
+
+		function btn_details() {
+		    var id = $("#gridList").jqGridRowValue().id;
+		    $.modalOpen({
+		        id: "Details",
+		        title: "查看动作",
+		        url: "Admin/Action/Details?id=" + id,
+		        width: "700px",
+		        height: "510px",
+		        btn: null,
+		    });
+		}
+	</script>																							
+</head>
+<body>
+<div class="topPanel">
+	<div class="search">
+        <table>
+            <tr>
+                <td style="padding-right: 3px;">
+                    <div class="btn-group">
+                        <a class="btn btn-primary dropdown-text" onclick="advance_search()">高级查询</a>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input id="txt_keyword" type="text" class="form-control" placeholder="请输入要查询的关键字" style="width: 200px;">
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="toolbar">
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+		<div class="btn-group">
+			<a id="NF-Details" authorize="yes" class="btn btn-primary" onclick="btn_details()"><i class="fa fa-bar-chart"></i>查看统计图表</a>
+        </div>
+        <div class="btn-group">
+            <a id="add" authorize="yes" class="btn btn-primary" onclick="btn_add()"><i class="fa fa-plus"></i>导入数据</a>
+        </div>
+		<div class="btn-group">
+			<a id="edit" authorize="yes" class="btn btn-primary" onclick="btn_edit()"><i class="fa fa-database"></i>备份数据</a>
+        </div>
+		<div class="btn-group">
+			<a id="delete" authorize="yes" class="btn btn-primary" onclick="btn_delete()"><i class="fa fa-trash-o"></i>清空数据</a>
+        </div>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+     <div id="gridPager" class="scroll"></div> 
+</div>
+</body>
+</html>

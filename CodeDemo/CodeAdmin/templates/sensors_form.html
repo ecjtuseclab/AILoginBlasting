@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<head>
+<title></title>
+
+<link href="static/nfine/css/framework-font.css" rel="stylesheet" />
+<link href="static/nfine/css/framework-theme.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="static/nfine/js/bootstrap/bootstrap-switch.min.css" rel="stylesheet" />
+
+<script src="static/nfine/js/jquery/jquery-2.1.1.min.js"></script>
+
+<script src="static/nfine/js/jqgrid/jqgrid.min.js"></script>
+<link href="static/nfine/js/jqgrid/jqgrid.css" rel="stylesheet" />
+<script src="static/nfine/js/jqgrid/grid.locale-cn.js"></script>
+
+<script src="static/nfine/js/bootstrap/bootstrap.js"></script>
+<script src="static/nfine/js/bootstrap/bootstrap-switch.js"></script>
+
+<link href="static/nfine/css/framework-ui.css" rel="stylesheet" />
+<script src="static/nfine/js/framework-ui.js"></script>
+<script src="static/nfine/js/indexsearch.js"></script>
+
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        //initControl();
+        if (!!keyValue) {
+            $.ajax({
+                url: "/SystemManage/Area/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+    function initControl() {
+        $("#parentid").bindSelect({
+            url: "/SystemManage/Area/GetTreeSelectJson"
+        });
+    }
+    function submitForm() {
+        //if (!$('#form1').formValid()) {
+        //    return false;
+        //}
+        if(keyValue == "")
+            keyValue = "0";
+            
+        $.submitForm({
+            url: "editsensors",
+            param: $("#form1").formSerialize(),  //id在form中
+            success: function (data) {
+                $.currentWindow().$("#gridList").resetSelection();
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+</script>
+
+</head>
+<body>
+
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#">基本信息</a></li>
+        </ul>
+        <div style="padding-top: 20px; margin-right: 30px;">
+            <table class="form">
+                <tr>
+                    <input id="id" name="id" type="hidden" class="form-control required" value="0"/>
+                    <th class="formTitle">传感器编号<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="sensor_code" name="sensor_code" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">传感器名称<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="sensor_name" name="sensor_name" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">传感器类别<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="type" name="type" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">是否启用<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="enable" name="enable" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">采集频率<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="acqfre" name="acqfre" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">发送频率<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="tranfre" name="tranfre" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">数据保留天数<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="keep_time" name="keep_time" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">数据缓存条数<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="rediscount" name="rediscount" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">引脚使用<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="pins" name="pins" type="text" class="form-control required" />
+                    </td>
+                    <th class="formTitle">参数<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="parameters" name="parameters" type="text" class="form-control required" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">备注<span style="color:red;">*</span></th>
+                    <td class="formValue">
+                        <input id="remark" name="remark" type="text" class="form-control required" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+
+</body>
+
+</html>

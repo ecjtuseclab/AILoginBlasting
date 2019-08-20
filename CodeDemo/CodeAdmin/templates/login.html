@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="keywords" content="jquery,ui,easy,easyui,web">
+    <meta name="description" content="easyui help you build your web page easily!">-->
+
+    <title>Diana后台登录</title>
+    <link href="Content/nfine/css/framework-login.css" rel="stylesheet" />
+	<script src="Content/nfine/js/jquery/jquery-2.1.1.min.js"></script>
+    <script src="Content/nfine/js/cookie/jquery.cookie.js"></script>
+    <style>
+        .tab_bar a {
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+            padding-bottom: 10px;
+            width: 100%;
+            text-align: center;
+            border-bottom: 3px solid #FFF;
+            margin-bottom: 15px;
+            color: #333;
+            -webkit-transition: all .3s linear;
+            transition: all .3s linear;
+        }
+
+        a.cur {
+            border-color: #f7691d;
+            font-weight: bold;
+        }
+        .img {
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="logo">
+                <i class="fa fa-modx"></i>
+                <h1><span>Diana</span>后台登录</h1>
+            </div>
+            <form class="form">
+             
+                <div class="tab_bar">
+                    <a href="javascript:;" id="account_login" type="button" onclick="account_login_switch()" class="cur">帐号登录</a>
+                 
+                </div>
+                <div id="ac_login">
+                    <div class="row">
+                        <input id="txt_account" type="text" value="admin" placeholder="用户名/手机号/邮箱">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="row">
+                        <input id="txt_password" type="password" value="123456" placeholder="登录密码">
+                        <i class="fa fa-key"></i>
+                    </div>
+                  
+                    <div class="row">
+                        <button id="fastlogin_button" type="button" ><span>登录</span></button>
+                    </div>
+                </div>
+                <div id="sc_login">
+                    <div id="code"></div>
+                </div>
+            </form>
+            <div class="login_tips"></div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(function () {
+                var fastlogin_button = $('#fastlogin_button');
+
+                $('body').keydown(
+                function (e) {
+                    if (e.keyCode == 13) {
+                        //alert('已按Enter键');
+                        fastsubmitForm();
+                    }
+                });
+
+                fastlogin_button.on('click', function () {
+                    //alert('已点击登录');
+                    fastsubmitForm();
+                });
+            });
+            //快速登录
+            var fastsubmitForm =  function () {
+                var $userName = $("#txt_account");
+                var $password = $("#txt_password");
+
+                if ($userName.val() == "") {
+                    $userName.focus();
+                    $.login.formMessage('请输入用户名/手机号/邮箱。');
+                    return false;
+                } else if ($password.val() == "") {
+                    $password.focus();
+                    $.login.formMessage('请输入登录密码。');
+                    return false;
+                }
+                else {
+					$.login.formMessage('');
+                    $("#fastlogin_button").attr('disabled', 'disabled').find('span').html("loading...");
+                    var params = 'username=' + $.trim($userName.val()) + '&password=' + $.trim($password.val());
+
+					$.ajax({
+                        url:"../cgi-bin/sensor.cgi?action=login&"+params,
+                        type: "post",
+                        success: function (data) {
+                            if (data=="success") {
+                                $("#fastlogin_button").find('span').html("登录成功，正在跳转...");
+                                window.location.href = "index.html?"+params;
+                            } else {
+                                $("#fastlogin_button").removeAttr('disabled').find('span').html("登录");
+                                $("#switchCode").trigger("click");
+                                $.login.formMessage(data);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        
+        //登录验证
+        (function ($) {
+            $.login = {
+                formMessage: function (msg) {
+                    $('.login_tips').find('.tips_msg').remove();
+                    $('.login_tips').append('<div class="tips_msg"><i class="fa fa-question-circle"></i>' + msg + '</div>');
+                },
+                init: function () {
+                    $('.wrapper').height($(window).height());
+                    $(".container").css("margin-top", ($(window).height() - $(".container").height()) / 2 - 50);
+                    $(window).resize(function (e) {
+                        $('.wrapper').height($(window).height());
+                        $(".container").css("margin-top", ($(window).height() - $(".container").height()) / 2 - 50);
+                    });
+                }
+            };
+            $(function () {
+                $.login.init();
+            });
+        })(jQuery);
+    </script>
+</body>
+</html>
