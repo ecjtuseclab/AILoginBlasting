@@ -7,13 +7,13 @@ from fileOperator import fileOperator
 
 class Config:
     #爆破网址
-    LoginUrl = 'http://xkxt.ecjtu.jx.cn/login/login_checkout.action'
+    LoginUrl = 'http://'
     #验证码URL
-    CodeUrl = 'http://xkxt.ecjtu.jx.cn/servlet/code.servlet'
+    CodeUrl = 'http://'
     #验证码服务API
     ServerAPI = 'http://localhost:9999/api?imgurl='
     #获取Cookie的URL
-    CookieURL = 'http://xkxt.ecjtu.jx.cn/login/quit_Quit.action'
+    CookieURL = 'http://'
     #cookie
     Cookies = ["JSESSIONID=F77639"]
     #Cookie要包含的字段
