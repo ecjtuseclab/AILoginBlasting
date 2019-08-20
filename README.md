@@ -43,7 +43,10 @@
     CodeDemo：远程服务的服务端程序，基于Django的web程序，里面加入CaptchaRecognition机器学习模块。
         运行：python manage.py runserver 0.0.0.0:8000
 
-    演示结果如下：
+演示Demo目标界面如下：
+![image](https://raw.githubusercontent.com/ecjtuseclab/AILoginBlasting/master/login.png)
+
+演示Demo结果如下：
 ![image](https://raw.githubusercontent.com/ecjtuseclab/AILoginBlasting/master/success.png)
 
 # 声明：弱口令检查工具，请勿用于非法用途
