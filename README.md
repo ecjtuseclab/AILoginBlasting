@@ -44,7 +44,7 @@
         运行：python manage.py runserver 0.0.0.0:8000
 
     演示结果如下：
-    !https://github.com/ecjtuseclab/AILoginBlasting/blob/master/success.png
+    https://github.com/ecjtuseclab/AILoginBlasting/blob/master/success.png
 
 # 声明：弱口令检查工具，请勿用于非法用途
 
