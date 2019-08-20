@@ -44,7 +44,7 @@
         运行：python manage.py runserver 0.0.0.0:8000
 
 演示Demo目标界面如下：
-![image](https://raw.githubusercontent.com/ecjtuseclab/AILoginBlasting/master/login.png)
+![image](https://raw.githubusercontent.com/ecjtuseclab/AILoginBlasting/master/demologin.png)
 
 演示Demo结果如下：
 ![image](https://raw.githubusercontent.com/ecjtuseclab/AILoginBlasting/master/success.png)
