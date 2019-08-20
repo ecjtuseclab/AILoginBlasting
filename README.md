@@ -31,8 +31,8 @@
 
     运行环境：
     python3.5以上
-    python安装numpy,tensorflow,opencv-python
-    python安装django(远程服务模式需要)
+    python安装：pip install requests,bs4,numpy,tensorflow,opencv-python
+    python安装：pip isnatll django   #(远程服务模式需要)
 
 
     各程序介绍：
@@ -43,6 +43,8 @@
     CodeDemo：远程服务的服务端程序，基于Django的web程序，里面加入CaptchaRecognition机器学习模块。
         运行：python manage.py runserver 0.0.0.0:8000
 
+    演示结果如下：
+    ![image](https://github.com/ecjtuseclab/AILoginBlasting/success.png)
 
 # 声明：弱口令检查工具，请勿用于非法用途
 
