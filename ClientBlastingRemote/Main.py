@@ -255,17 +255,17 @@ class Main():
         self.timer = threading.Timer(1, self.ShowResultContentTimer)  # 首次启动
         self.timer.start()
 
-        start2 = time.time()
+        starttime = time.time()
         if self.conf.IsSingleThread:self.SingleThread()
         else:self.Multithread()
-        end2 = time.time()
-        print("time2: " + str(end2 - start2))
-        #self.ShowResultContent()
+        endtime = time.time()
+        print("spend time: " + str(endtime - starttime)+" 秒")
+        self.ShowResultContent()
         
     def Test(self):
-        self.getCodeNum('D:\git\CaptchaRecognition\ClientBlastingRemote\img\8484.jpg')
+        self.getCodeNum('ClientBlastingRemote\img\8484.jpg')
 
 
 main = Main()
-#main.Test()
+#main.Test()  #测试用
 main.Run()
