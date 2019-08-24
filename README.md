@@ -1,9 +1,11 @@
 # AILoginBlasting
 基于机器学习的登录验证码爆破工具
 
-开发人员：[康文洋](https://github.com/Little-kwy?tab=repositories)、魏超、张梦丽、陈兰兰、艾美珍、夏萍萍、易传佳、张泓、王松
+说在前面<br>
+喜欢我们的项目请Fork、Star、Watching支持我们。<br>
+如果有宝贵的意见，请在Issue中回复，你们宝贵的意见是我们完善的动力。<br>
 
-喜欢我们的项目请Fork、Star、Watching我们。
+开发人员：[康文洋](https://github.com/Little-kwy?tab=repositories)、魏超、张梦丽、陈兰兰、艾美珍、夏萍萍、易传佳、张泓、王松
 
 基于机器学习的登录验证码爆破工具提供了两种工作模式：本地运行模式和远程服务运行模式。<br>
 不管是本地运行模式还是远程服务运行模式都需要安装服务端和客户端。<br>
